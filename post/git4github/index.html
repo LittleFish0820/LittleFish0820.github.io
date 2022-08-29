@@ -1,0 +1,381 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Git与代码托管中心 | 小鱼儿</title>
+<link rel="shortcut icon" href="https://LittleFish0820.github.io/favicon.ico?v=1661738962773">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://LittleFish0820.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Git与代码托管中心 | 小鱼儿 - Atom Feed" href="https://LittleFish0820.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="
+Git 团队协作机制
+GitHub 操作
+
+创建远程仓库
+远程仓库操作
+邀请合作伙伴
+跨团队协作
+免密登录
+
+
+IDEA 集成 Git
+
+.ignore忽略规则文件
+定位Git程序
+
+
+IDEA 集成 GitHub
+码云
+GitLab
+
+..." />
+    <meta name="keywords" content="Git" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://LittleFish0820.github.io">
+  <img class="avatar" src="https://LittleFish0820.github.io/images/avatar.png?v=1661738962773" alt="">
+  </a>
+  <h1 class="site-title">
+    小鱼儿
+  </h1>
+  <p class="site-description">
+    鱼戏莲叶间
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Git与代码托管中心
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-08-23
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://LittleFish0820.github.io/tag/git/" class="post-tag">
+                  # Git
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p><ul class="markdownIt-TOC">
+<li><a href="#git-%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%E6%9C%BA%E5%88%B6">Git 团队协作机制</a></li>
+<li><a href="#github-%E6%93%8D%E4%BD%9C">GitHub 操作</a>
+<ul>
+<li><a href="#%E5%88%9B%E5%BB%BA%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93">创建远程仓库</a></li>
+<li><a href="#%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93%E6%93%8D%E4%BD%9C">远程仓库操作</a></li>
+<li><a href="#%E9%82%80%E8%AF%B7%E5%90%88%E4%BD%9C%E4%BC%99%E4%BC%B4">邀请合作伙伴</a></li>
+<li><a href="#%E8%B7%A8%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C">跨团队协作</a></li>
+<li><a href="#%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95">免密登录</a></li>
+</ul>
+</li>
+<li><a href="#idea-%E9%9B%86%E6%88%90-git">IDEA 集成 Git</a>
+<ul>
+<li><a href="#ignore%E5%BF%BD%E7%95%A5%E8%A7%84%E5%88%99%E6%96%87%E4%BB%B6">.ignore忽略规则文件</a></li>
+<li><a href="#%E5%AE%9A%E4%BD%8Dgit%E7%A8%8B%E5%BA%8F">定位Git程序</a></li>
+</ul>
+</li>
+<li><a href="#idea-%E9%9B%86%E6%88%90-github">IDEA 集成 GitHub</a></li>
+<li><a href="#%E7%A0%81%E4%BA%91">码云</a></li>
+<li><a href="#gitlab">GitLab</a></li>
+</ul>
+</p>
+<p>IDEA、Pycharm集成git，GitHub。</p>
+<!--more-->
+<h1 id="git-团队协作机制">Git 团队协作机制</h1>
+<h1 id="github-操作">GitHub 操作</h1>
+<h2 id="创建远程仓库">创建远程仓库</h2>
+<figure data-type="image" tabindex="1"><img src="https://LittleFish0820.github.io/post-images/1661196767433.png" alt="" loading="lazy"></figure>
+<p>下滑点击<code>Create repository</code>即可</p>
+<p>快速开始：仓库名，还有一些操作命令</p>
+<figure data-type="image" tabindex="2"><img src="https://LittleFish0820.github.io/post-images/1661196819092.png" alt="" loading="lazy"></figure>
+<h2 id="远程仓库操作">远程仓库操作</h2>
+<p><strong>1. 查看远程仓库别名</strong></p>
+<pre><code class="language-shell">$ git remote -v
+</code></pre>
+<p><strong>2. 创建远程仓库别名</strong></p>
+<pre><code class="language-shell">$ git remote add pySpider https://github.com/LittleFish0820/python-spider.git
+
+$ git remote -v
+pySpider        https://github.com/LittleFish0820/python-spider.git (fetch)
+pySpider        https://github.com/LittleFish0820/python-spider.git (push)
+</code></pre>
+<p>可拉可推</p>
+<p><strong>3. 删除远程仓库别名</strong></p>
+<pre><code class="language-shell">$ git remote remove pySpider
+$ git remote -v
+</code></pre>
+<p><strong>4. 推送本地分支到远程仓库</strong></p>
+<pre><code class="language-shell">$ git push pySpider master
+</code></pre>
+<p>需要登录。换一种，先移步免密登录</p>
+<pre><code class="language-bash">$ git remote remove pySpider
+$ git remote add pySpider git@github.com:LittleFish0820/python-spider.git
+
+$ git push pySpider master
+Enumerating objects: 4, done.
+Counting objects: 100% (4/4), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (4/4), 605 bytes | 302.00 KiB/s, done.
+Total 4 (delta 0), reused 0 (delta 0), pack-reused 0
+To github.com:LittleFish0820/python-spider.git
+ * [new branch]      master -&gt; master
+</code></pre>
+<p><strong>5. 克隆远程仓库到本地</strong></p>
+<pre><code class="language-shell">$ git clone https://github.com/LittleFish0820/python-spider.git
+Cloning into 'python-spider'...
+Cloning into 'python-spider'...
+remote: Enumerating objects: 4, done.
+remote: Counting objects: 100% (4/4), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 4 (delta 0), reused 4 (delta 0), pack-reused 0
+Receiving objects: 100% (4/4), done.
+</code></pre>
+<p><strong>6. 拉取远程仓库内容</strong></p>
+<pre><code class="language-bash">$ git init
+
+$ git pull git@github.com:LittleFish0820/python-spider master
+remote: Enumerating objects: 4, done.
+remote: Counting objects: 100% (4/4), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 4 (delta 0), reused 4 (delta 0), pack-reused 0
+Unpacking objects: 100% (4/4), 585 bytes | 3.00 KiB/s, done.
+From github.com:LittleFish0820/python-spider
+ * branch            master     -&gt; FETCH_HEAD
+</code></pre>
+<h2 id="邀请合作伙伴">邀请合作伙伴</h2>
+<figure data-type="image" tabindex="3"><img src="https://LittleFish0820.github.io/post-images/1661196867942.png" alt="" loading="lazy"></figure>
+<h2 id="跨团队协作">跨团队协作</h2>
+<p><code>fork</code></p>
+<p><code>Pull requests</code></p>
+<h2 id="免密登录">免密登录</h2>
+<pre><code class="language-bash"># 进入C:\Users\Administrator
+$ mkdir .ssh
+$ cd .ssh/
+$ ssh-keygen -t rsa -C fish@nenu.enu.cn
+$ cat id_rsa.pub
+</code></pre>
+<p>将公钥信息添加到github账户，然后验证免密登录是否成功</p>
+<pre><code class="language-bash">$ ssh -T git@github.com
+Hi LittleFish0820! You've successfully authenticated, but GitHub does not provide shell access.
+</code></pre>
+<h1 id="idea-集成-git">IDEA 集成 Git</h1>
+<h2 id="ignore忽略规则文件">.ignore忽略规则文件</h2>
+<pre><code class="language-ignore"># Compiled class file
+*.class
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs, see 
+http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+.classpath
+.project
+.settings
+target
+.idea
+*.iml
+</code></pre>
+<p>在<code>.gitconfig</code>文件中引用忽略配置文件</p>
+<pre><code class="language-shell">cd ~
+vim .gitconfig
+[user]
+	name = ***
+	email = ***
+[core]
+	excludesfile = C:/Users/***/git.ignore
+</code></pre>
+<h2 id="定位git程序">定位Git程序</h2>
+<p><code>Settings -&gt; Version Control -&gt; Git -&gt; ./git/bin/git.exe</code></p>
+<p>需要初始化本地库IDEA才能用git</p>
+<ul>
+<li>add</li>
+<li>commit</li>
+<li>branch</li>
+<li>merge</li>
+</ul>
+<h1 id="idea-集成-github">IDEA 集成 GitHub</h1>
+<p><code>Settings -&gt; Version Control -&gt; GitHub</code></p>
+<p>两种登录方式：直接登录和Token令牌</p>
+<ul>
+<li>
+<p>push</p>
+</li>
+<li>
+<p>pull</p>
+</li>
+<li>
+<p>clone</p>
+</li>
+</ul>
+<h1 id="码云">码云</h1>
+<p>以后如果用到了再更新</p>
+<h1 id="gitlab">GitLab</h1>
+<p>如果用到了再更新</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#git-%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%E6%9C%BA%E5%88%B6">Git 团队协作机制</a></li>
+<li><a href="#github-%E6%93%8D%E4%BD%9C">GitHub 操作</a>
+<ul>
+<li><a href="#%E5%88%9B%E5%BB%BA%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93">创建远程仓库</a></li>
+<li><a href="#%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93%E6%93%8D%E4%BD%9C">远程仓库操作</a></li>
+<li><a href="#%E9%82%80%E8%AF%B7%E5%90%88%E4%BD%9C%E4%BC%99%E4%BC%B4">邀请合作伙伴</a></li>
+<li><a href="#%E8%B7%A8%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C">跨团队协作</a></li>
+<li><a href="#%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95">免密登录</a></li>
+</ul>
+</li>
+<li><a href="#idea-%E9%9B%86%E6%88%90-git">IDEA 集成 Git</a>
+<ul>
+<li><a href="#ignore%E5%BF%BD%E7%95%A5%E8%A7%84%E5%88%99%E6%96%87%E4%BB%B6">.ignore忽略规则文件</a></li>
+<li><a href="#%E5%AE%9A%E4%BD%8Dgit%E7%A8%8B%E5%BA%8F">定位Git程序</a></li>
+</ul>
+</li>
+<li><a href="#idea-%E9%9B%86%E6%88%90-github">IDEA 集成 GitHub</a></li>
+<li><a href="#%E7%A0%81%E4%BA%91">码云</a></li>
+<li><a href="#gitlab">GitLab</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://LittleFish0820.github.io/post/Java_throwable/">
+              <h3 class="post-title">
+                Java异常
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://LittleFish0820.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

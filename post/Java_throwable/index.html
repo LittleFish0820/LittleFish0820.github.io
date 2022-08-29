@@ -1,0 +1,383 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Java异常 | 小鱼儿</title>
+<link rel="shortcut icon" href="https://LittleFish0820.github.io/favicon.ico?v=1661738962773">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://LittleFish0820.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Java异常 | 小鱼儿 - Atom Feed" href="https://LittleFish0820.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="本文介绍Error和Exception、自定义异常和IDEA调试方法。
+
+
+异常机制
+异常分类
+
+Error
+Exception
+
+Runtime Exception
+Checked Exception
+
+
+
+
+异常的处理方式
+
+捕获异常
+..." />
+    <meta name="keywords" content="Java基础" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://LittleFish0820.github.io">
+  <img class="avatar" src="https://LittleFish0820.github.io/images/avatar.png?v=1661738962773" alt="">
+  </a>
+  <h1 class="site-title">
+    小鱼儿
+  </h1>
+  <p class="site-description">
+    鱼戏莲叶间
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Java异常
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-08-22
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://LittleFish0820.github.io/tag/JAVASE/" class="post-tag">
+                  # Java基础
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>本文介绍Error和Exception、自定义异常和IDEA调试方法。</p>
+<!-- more -->
+<p><ul class="markdownIt-TOC">
+<li><a href="#%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6">异常机制</a></li>
+<li><a href="#%E5%BC%82%E5%B8%B8%E5%88%86%E7%B1%BB">异常分类</a>
+<ul>
+<li><a href="#error">Error</a></li>
+<li><a href="#exception">Exception</a>
+<ul>
+<li><a href="#runtime-exception">Runtime Exception</a></li>
+<li><a href="#checked-exception">Checked Exception</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E5%BC%82%E5%B8%B8%E7%9A%84%E5%A4%84%E7%90%86%E6%96%B9%E5%BC%8F">异常的处理方式</a>
+<ul>
+<li><a href="#%E6%8D%95%E8%8E%B7%E5%BC%82%E5%B8%B8">捕获异常</a></li>
+<li><a href="#%E5%A3%B0%E6%98%8E%E5%BC%82%E5%B8%B8">声明异常</a></li>
+<li><a href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%BC%82%E5%B8%B8">自定义异常</a>
+<ul>
+<li><a href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B9%B4%E9%BE%84%E4%B8%BA%E8%B4%9F%E6%95%B0%E7%9A%84%E5%BC%82%E5%B8%B8">自定义年龄为负数的异常</a></li>
+</ul>
+</li>
+<li><a href="#person%E7%B1%BB">Person类</a></li>
+</ul>
+</li>
+<li><a href="#idea-%E8%B0%83%E8%AF%95-debug">IDEA 调试 debug</a></li>
+</ul>
+</p>
+<h1 id="异常机制">异常机制</h1>
+<p>Java采用面向对象的方式处理异常</p>
+<ul>
+<li>抛出异常：在执行一个方法时若发生异常，则这个方法生成代表该异常的一个对象，停止当前执行路径，并把异常对象提交给JRE(Java Runtime Environment)</li>
+<li>捕获异常：JRE得到该异常后，寻找相应的代码来处理该异常。JRE在方法的调用栈中查找，从生成异常的方法开始回溯，直到找到相应的异常处理代码为止。</li>
+</ul>
+<h1 id="异常分类">异常分类</h1>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/ddb5ed058ed64fb59e7c4f49652141d9.png" alt="继承图" loading="lazy"></figure>
+<h2 id="error">Error</h2>
+<p>是程序无法处理的错误，较严重。</p>
+<ul>
+<li>Virtual Machine Error</li>
+<li>Out Of Memory Error</li>
+<li>...</li>
+</ul>
+<p>Error发生时，Java虚拟机一般会选择线程终止。</p>
+<h2 id="exception">Exception</h2>
+<p>是程序本身能够处理的异常。</p>
+<h3 id="runtime-exception">Runtime Exception</h3>
+<p>这里异常通常是由编程错误导致，因此可以用逻辑处理来避免异常。</p>
+<ul>
+<li>Null Pointer Exception</li>
+<li>Array Index Out Of Bounds Exception</li>
+<li>Class Cast Exception</li>
+<li>Arithmetic Exception 算术异常</li>
+<li>Number Format Exception</li>
+</ul>
+<h3 id="checked-exception">Checked Exception</h3>
+<p>这类异常在编译时就必须作出处理，否则无法通过编译。</p>
+<ul>
+<li>IO Exception</li>
+<li>SQL Exception</li>
+</ul>
+<h1 id="异常的处理方式">异常的处理方式</h1>
+<h2 id="捕获异常">捕获异常</h2>
+<p><code>try-catch-finally</code></p>
+<ul>
+<li><code>\uFFFF</code>表示空字符</li>
+<li><code>System.out.printf</code>不能输出<code>char</code></li>
+<li>异常捕获顺序 子类在父类前面</li>
+<li><code>finally</code>中用来关闭程序块已打开的资源，例如关闭文件流，释放数据库连接等。</li>
+</ul>
+<pre><code class="language-java">public class IoException {
+    public static void main(String[] args) {
+        FileReader fileReader = null;
+        try {
+            fileReader = new FileReader(&quot;input/input.txt&quot;);
+            char ch = (char)fileReader.read();
+            while (ch != '\uFFFF') {
+                System.out.printf(&quot;&quot; + ch);
+                ch = (char)fileReader.read();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (fileReader != null)
+                    fileReader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+</code></pre>
+<h2 id="声明异常">声明异常</h2>
+<p><code>readFile</code>抛出异常，<code>main</code>捕获到异常，并输出自定义语句。</p>
+<pre><code class="language-java">import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class Throws {
+    public static void main(String[] args) {
+        try {
+            readFile(&quot;input/input.txt&quot;);
+        } catch (FileNotFoundException e) {
+            System.out.println(&quot;所需文件不存在！&quot;);
+        } catch (IOException e) {
+            System.out.println(&quot;文件读写错误！&quot;);
+        }
+    }
+    public static void readFile(String fileName) throws FileNotFoundException, IOException {
+        FileReader fileReader = new FileReader(fileName);
+        char ch = (char)fileReader.read();
+        while (ch != '\uFFFF') {
+            System.out.printf(&quot;&quot; + ch);
+            ch = (char)fileReader.read();
+        }
+        fileReader.close();
+    }
+}
+</code></pre>
+<h2 id="自定义异常">自定义异常</h2>
+<h3 id="自定义年龄为负数的异常">自定义年龄为负数的异常</h3>
+<pre><code class="language-java">public class IllegalAgeException extends Exception{
+    IllegalAgeException() {}
+    IllegalAgeException(String message) {
+        super(message); // 调用父类的构造函数
+    }
+}
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://img-blog.csdnimg.cn/0701dc7cbce246488b889c83bcfcf56b.png" alt="Exception构造函数" loading="lazy"></figure>
+<h2 id="person类">Person类</h2>
+<pre><code class="language-java">public class Person {
+    private String name;
+    private int age;
+    public void setName(String name) {this.name = name;};
+    public void setAge(int age) throws IllegalAgeException {
+        if (age &lt; 0) {
+            throw new IllegalAgeException(&quot;年龄不能为负数&quot;);
+        }
+        this.age = age;
+    };
+
+    public static void main(String[] args)  {
+        Person person = new Person();
+        person.setName(&quot;张三&quot;);
+        try {
+            person.setAge(-24);
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            System.out.println(&quot;exit&quot;);
+        }
+    }
+}
+</code></pre>
+<figure data-type="image" tabindex="3"><img src="https://img-blog.csdnimg.cn/3a4ea6b8654444c8bbe516f1a4e06aab.png" alt="自定义异常输出信息" loading="lazy"></figure>
+<h1 id="idea-调试-debug">IDEA 调试 debug</h1>
+<ul>
+<li>添加断点</li>
+<li>进入调试模式
+<ul>
+<li>编辑区单击右键，点击：debug</li>
+<li>单击工具栏上的按钮</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6">异常机制</a></li>
+<li><a href="#%E5%BC%82%E5%B8%B8%E5%88%86%E7%B1%BB">异常分类</a>
+<ul>
+<li><a href="#error">Error</a></li>
+<li><a href="#exception">Exception</a>
+<ul>
+<li><a href="#runtime-exception">Runtime Exception</a></li>
+<li><a href="#checked-exception">Checked Exception</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E5%BC%82%E5%B8%B8%E7%9A%84%E5%A4%84%E7%90%86%E6%96%B9%E5%BC%8F">异常的处理方式</a>
+<ul>
+<li><a href="#%E6%8D%95%E8%8E%B7%E5%BC%82%E5%B8%B8">捕获异常</a></li>
+<li><a href="#%E5%A3%B0%E6%98%8E%E5%BC%82%E5%B8%B8">声明异常</a></li>
+<li><a href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%BC%82%E5%B8%B8">自定义异常</a>
+<ul>
+<li><a href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B9%B4%E9%BE%84%E4%B8%BA%E8%B4%9F%E6%95%B0%E7%9A%84%E5%BC%82%E5%B8%B8">自定义年龄为负数的异常</a></li>
+</ul>
+</li>
+<li><a href="#person%E7%B1%BB">Person类</a></li>
+</ul>
+</li>
+<li><a href="#idea-%E8%B0%83%E8%AF%95-debug">IDEA 调试 debug</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://LittleFish0820.github.io/post/java_array/">
+              <h3 class="post-title">
+                Java数组
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://LittleFish0820.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

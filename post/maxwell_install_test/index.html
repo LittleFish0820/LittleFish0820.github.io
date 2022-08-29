@@ -1,0 +1,328 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Maxwell安装、配置与测试 | 小鱼儿</title>
+<link rel="shortcut icon" href="https://LittleFish0820.github.io/favicon.ico?v=1661738962773">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://LittleFish0820.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Maxwell安装、配置与测试 | 小鱼儿 - Atom Feed" href="https://LittleFish0820.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Maxwell能实时读取MySQL二进制日志binlog，生成JSON格式消息，并作为生产者发送给Kafka等应用程序。
+
+
+Maxwell安装
+配置MySQL
+
+启用MySQL Binlog
+创建Maxwell所需数据库和用户
+配置Max..." />
+    <meta name="keywords" content="Maxwell" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://LittleFish0820.github.io">
+  <img class="avatar" src="https://LittleFish0820.github.io/images/avatar.png?v=1661738962773" alt="">
+  </a>
+  <h1 class="site-title">
+    小鱼儿
+  </h1>
+  <p class="site-description">
+    鱼戏莲叶间
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Maxwell安装、配置与测试
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-08-27
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://LittleFish0820.github.io/tag/maxwell/" class="post-tag">
+                  # Maxwell
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>Maxwell能实时读取MySQL二进制日志binlog，生成JSON格式消息，并作为生产者发送给Kafka等应用程序。</p>
+<!-- more -->
+<p><ul class="markdownIt-TOC">
+<li><a href="#maxwell%E5%AE%89%E8%A3%85">Maxwell安装</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AEmysql">配置MySQL</a>
+<ul>
+<li><a href="#%E5%90%AF%E7%94%A8mysql-binlog">启用MySQL Binlog</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BAmaxwell%E6%89%80%E9%9C%80%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%94%A8%E6%88%B7">创建Maxwell所需数据库和用户</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AEmaxwell">配置Maxwell</a></li>
+</ul>
+</li>
+<li><a href="#maxwell%E4%BD%BF%E7%94%A8">Maxwell使用</a>
+<ul>
+<li><a href="#%E5%90%AF%E5%8A%A8kafka">启动Kafka</a></li>
+<li><a href="#maxwell%E5%90%AF%E5%8A%A8%E5%92%8C%E5%81%9C%E6%AD%A2">Maxwell启动和停止</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95">测试</a>
+<ul>
+<li><a href="#%E5%9C%A8103%E5%90%AF%E5%8A%A8kafka%E6%B6%88%E8%B4%B9">在103启动kafka消费</a></li>
+<li><a href="#%E5%9C%A8102%E7%94%9F%E6%88%90%E6%A8%A1%E6%8B%9F%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE">在102生成模拟业务数据</a></li>
+</ul>
+</li>
+<li><a href="#maxwell-bootstrap%E5%8E%86%E5%8F%B2%E6%95%B0%E6%8D%AE%E5%85%A8%E9%87%8F%E5%90%8C%E6%AD%A5">Maxwell-bootstrap历史数据全量同步</a></li>
+</ul>
+</li>
+<li><a href="#%E9%87%87%E9%9B%86%E9%80%9A%E9%81%93maxwell%E9%85%8D%E7%BD%AE">采集通道Maxwell配置</a></li>
+</ul>
+</p>
+<h1 id="maxwell安装">Maxwell安装</h1>
+<pre><code class="language-shell">tar -zxvf maxwell-1.29.2.tar.gz -C /opt/module
+</code></pre>
+<h1 id="配置mysql">配置MySQL</h1>
+<h2 id="启用mysql-binlog">启用MySQL Binlog</h2>
+<pre><code class="language-shell">sudo vim /etc/my.cnf
+
+# 数据库id
+server-id=1
+# 启动binlog
+log-bin=mysql-bin
+# binlog类型，maxwell要求为row类型
+binlog_format=row
+# 启用binlog的数据库，需根据实际情况作出修改
+binlog-do-db=gmall
+#binlog-ignore-db=gmall 100个数据库忽略1个
+</code></pre>
+<p>重启MySQL，测试是否生效</p>
+<pre><code class="language-shell">sudo systemctl restart mysqld
+mysql -uroot -p123456
+</code></pre>
+<pre><code class="language-sql">show master status;
+</code></pre>
+<h2 id="创建maxwell所需数据库和用户">创建Maxwell所需数据库和用户</h2>
+<ol>
+<li>创建数据库</li>
+</ol>
+<pre><code class="language-sql">create database maxwell;
+</code></pre>
+<ol start="2">
+<li>降低密码级别 (Alt快捷复制)</li>
+</ol>
+<pre><code class="language-sql">set global validate_password_policy=0;
+set global validate_password_length=4; # &gt;=4
+</code></pre>
+<ol start="3">
+<li>创建Maxwell用户并赋予其必要权限</li>
+</ol>
+<pre><code class="language-sql">create user 'maxwell'@'%' identified by 'maxwell';
+grant all on maxwell.* to 'maxwell'@'%';
+grant select, replication client, replication slave on *.* to 'maxwell'@'%';
+
+quit;
+</code></pre>
+<h2 id="配置maxwell">配置Maxwell</h2>
+<pre><code class="language-shell">cd /opt/module/maxwell
+cp config.properties.example config.properties
+vim config.properties
+</code></pre>
+<pre><code class="language-shell"># Maxwell数据发送目的地
+producer=kafka
+
+# 目标Kafka集群地址
+kafka.bootstrap.servers=hadoop102:9092,hadoop103:9092
+
+# 目标Kafka topic
+# 静态配置
+kafka_topic=maxwell
+
+# MySQL 相关配置
+host=hadoop102
+user=maxwell
+password=maxwell
+jdbc_options=useSLL=false&amp;serverTimezone=Asia/Shanghai
+</code></pre>
+<h1 id="maxwell使用">Maxwell使用</h1>
+<h2 id="启动kafka">启动Kafka</h2>
+<p>先启动Zookeeper</p>
+<pre><code class="language-bash">zk.sh
+kf.sh
+</code></pre>
+<h2 id="maxwell启动和停止">Maxwell启动和停止</h2>
+<pre><code class="language-shell">./bin/maxwell --config ./config.properties --daemon
+</code></pre>
+<p>停止没有专用命令，须使用<code>kill -9</code>，移步shell脚本大全</p>
+<p>出错查信息到<code>./log</code></p>
+<h2 id="测试">测试</h2>
+<h3 id="在103启动kafka消费">在103启动kafka消费</h3>
+<pre><code class="language-shell">kafka-console-consume.sh --bootstrap-server hadoop102:9092 --topic maxwell
+</code></pre>
+<h3 id="在102生成模拟业务数据">在102生成模拟业务数据</h3>
+<p>需要保证配置的账号密码一致</p>
+<pre><code class="language-shell">java -jar gmall2020-mock-db-2021-11-14.jar
+</code></pre>
+<h2 id="maxwell-bootstrap历史数据全量同步">Maxwell-bootstrap历史数据全量同步</h2>
+<pre><code class="language-shell">(102) /opt/module/maxwell/bin/maxwell-bootstrap --database gmall --table user_info --config /opt/module/maxwell/config.properties
+</code></pre>
+<h1 id="采集通道maxwell配置">采集通道Maxwell配置</h1>
+<p>把 topic 从 maxwell 改成 topic_db 即可</p>
+<pre><code class="language-shell">cd /opt/module/maxwell
+vim config.properties
+</code></pre>
+<p>改完配置后需要重启</p>
+<pre><code class="language-shell">mxw.sh restart
+</code></pre>
+<p>103启动kafka</p>
+<pre><code class="language-shell">kafka-console-consume.sh --bootstrap-server hadoop102:9092 --topic topic_db
+</code></pre>
+<p>102写数据</p>
+<pre><code class="language-shell">java -jar gmall2020-mock-db-2021-11-14.jar
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#maxwell%E5%AE%89%E8%A3%85">Maxwell安装</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AEmysql">配置MySQL</a>
+<ul>
+<li><a href="#%E5%90%AF%E7%94%A8mysql-binlog">启用MySQL Binlog</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BAmaxwell%E6%89%80%E9%9C%80%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%94%A8%E6%88%B7">创建Maxwell所需数据库和用户</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AEmaxwell">配置Maxwell</a></li>
+</ul>
+</li>
+<li><a href="#maxwell%E4%BD%BF%E7%94%A8">Maxwell使用</a>
+<ul>
+<li><a href="#%E5%90%AF%E5%8A%A8kafka">启动Kafka</a></li>
+<li><a href="#maxwell%E5%90%AF%E5%8A%A8%E5%92%8C%E5%81%9C%E6%AD%A2">Maxwell启动和停止</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95">测试</a>
+<ul>
+<li><a href="#%E5%9C%A8103%E5%90%AF%E5%8A%A8kafka%E6%B6%88%E8%B4%B9">在103启动kafka消费</a></li>
+<li><a href="#%E5%9C%A8102%E7%94%9F%E6%88%90%E6%A8%A1%E6%8B%9F%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE">在102生成模拟业务数据</a></li>
+</ul>
+</li>
+<li><a href="#maxwell-bootstrap%E5%8E%86%E5%8F%B2%E6%95%B0%E6%8D%AE%E5%85%A8%E9%87%8F%E5%90%8C%E6%AD%A5">Maxwell-bootstrap历史数据全量同步</a></li>
+</ul>
+</li>
+<li><a href="#%E9%87%87%E9%9B%86%E9%80%9A%E9%81%93maxwell%E9%85%8D%E7%BD%AE">采集通道Maxwell配置</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://LittleFish0820.github.io/post/mysql_install/">
+              <h3 class="post-title">
+                MySQL安装 (Linux)
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://LittleFish0820.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

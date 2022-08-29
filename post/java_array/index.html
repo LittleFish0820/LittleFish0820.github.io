@@ -1,0 +1,426 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Java数组 | 小鱼儿</title>
+<link rel="shortcut icon" href="https://LittleFish0820.github.io/favicon.ico?v=1661738962773">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://LittleFish0820.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Java数组 | 小鱼儿 - Atom Feed" href="https://LittleFish0820.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="本文介绍Java数组的创建、遍历、复制，Arrays类的几种常用方法，以及优化后的冒泡排序。
+
+
+数组概述
+创建数组和初始化
+数组遍历和复制
+Java.util.Arrays类
+
+Arrays.toString()
+Arrays.sort(..." />
+    <meta name="keywords" content="Java基础" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://LittleFish0820.github.io">
+  <img class="avatar" src="https://LittleFish0820.github.io/images/avatar.png?v=1661738962773" alt="">
+  </a>
+  <h1 class="site-title">
+    小鱼儿
+  </h1>
+  <p class="site-description">
+    鱼戏莲叶间
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Java数组
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-08-20
+              </span>
+              <span>
+                5 min read
+              </span>
+              
+                <a href="https://LittleFish0820.github.io/tag/JAVASE/" class="post-tag">
+                  # Java基础
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p>本文介绍Java数组的创建、遍历、复制，Arrays类的几种常用方法，以及优化后的冒泡排序。</p>
+<!-- more -->
+<p><ul class="markdownIt-TOC">
+<li><a href="#%E6%95%B0%E7%BB%84%E6%A6%82%E8%BF%B0">数组概述</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E6%95%B0%E7%BB%84%E5%92%8C%E5%88%9D%E5%A7%8B%E5%8C%96">创建数组和初始化</a></li>
+<li><a href="#%E6%95%B0%E7%BB%84%E9%81%8D%E5%8E%86%E5%92%8C%E5%A4%8D%E5%88%B6">数组遍历和复制</a></li>
+<li><a href="#javautilarrays%E7%B1%BB">Java.util.Arrays类</a>
+<ul>
+<li><a href="#arraystostring">Arrays.toString()</a></li>
+<li><a href="#arrayssort">Arrays.sort()</a></li>
+<li><a href="#arraysfill">Arrays.fill()</a></li>
+</ul>
+</li>
+<li><a href="#%E7%94%A8%E6%95%B0%E7%BB%84%E5%AD%98%E5%82%A8%E8%A1%A8%E6%A0%BC%E6%95%B0%E6%8D%AE">用数组存储表格数据</a></li>
+<li><a href="#%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F%E4%BC%98%E5%8C%96">冒泡排序(优化)</a></li>
+<li><a href="#%E4%BA%8C%E5%88%86%E6%B3%95">二分法</a></li>
+</ul>
+</p>
+<h1 id="数组概述">数组概述</h1>
+<ol>
+<li>长度确定</li>
+<li>元素类型必须相同</li>
+<li>可以存储基本数据类型和引用数据类型</li>
+<li>数组变量属于引用类型</li>
+</ol>
+<hr>
+<h1 id="创建数组和初始化">创建数组和初始化</h1>
+<pre><code class="language-java">int[] arr1 = null;  // 声明数组
+arr1 = new int[4];  // 给数组分配空间
+int arr2[] = new int[4];
+int[] arr3 = new int[] {1, 2, 3, 4};
+
+String mat1[][] = {{&quot;Hello&quot;, &quot;Flink&quot;, &quot;Hadoop&quot;}, {&quot;Spark&quot;, &quot;Flume&quot;}};
+double[] mat2[] = new double[4][];
+char mat3[][] = new char[4][4];
+</code></pre>
+<hr>
+<h1 id="数组遍历和复制">数组遍历和复制</h1>
+<ol>
+<li>下标遍历与增强for循环</li>
+</ol>
+<pre><code class="language-java">String mat[][] = {{&quot;Hello&quot;, &quot;Flink&quot;, &quot;Hadoop&quot;}, {&quot;Spark&quot;, &quot;Flume&quot;}};
+
+for (int i = 0; i &lt; mat.length; i++) {
+    for (int j = 0; j &lt; mat[i].length; j++) {
+        System.out.printf(mat[i][j] + ' ');
+    }
+    System.out.println();
+}
+
+System.out.println(&quot;--------------------------------&quot;);
+
+for (String[] words : mat) {
+    for (String word : words) {
+        System.out.printf(word + ' ');
+    }
+    System.out.println();
+}
+</code></pre>
+<ol start="2">
+<li>复制</li>
+</ol>
+<pre><code class="language-java">System.arraycopy(object src, int srcpos, object dest, int destpos, int length)
+String mat[][] = {{&quot;Hello&quot;, &quot;Flink&quot;, &quot;Hadoop&quot;}, {&quot;Spark&quot;, &quot;Flume&quot;}};
+String matCopy[][] = new String[2][];
+System.arraycopy(mat, 0, matCopy, 0, 2);
+System.out.println(matCopy.toString());
+System.out.println(Arrays.toString(matCopy));
+System.out.println(Arrays.toString(matCopy[0]));
+System.out.println(Arrays.toString(matCopy[1]));
+// ---------------------------------------------
+[[Ljava.lang.String;@14ae5a5
+[[Ljava.lang.String;@7f31245a, [Ljava.lang.String;@6d6f6e28]
+[Hello, Flink, Hadoop]
+[Spark, Flume]
+</code></pre>
+<hr>
+<h1 id="javautilarrays类">Java.util.Arrays类</h1>
+<h2 id="arraystostring">Arrays.toString()</h2>
+<p>打印数组元素的值，若数组元素还是引用类型，则打印的仍然是引用的值<br>
+<code>Arrays.toString()</code>方法是<code>Arrays</code>类的静态方法</p>
+<pre><code class="language-java">public static String toString(Object[] a) {
+    if (a == null)
+        return &quot;null&quot;;
+
+    int iMax = a.length - 1;
+    if (iMax == -1)
+        return &quot;[]&quot;;
+
+    StringBuilder b = new StringBuilder();
+    b.append('[');
+    for (int i = 0; ; i++) {
+        b.append(String.valueOf(a[i]));
+        if (i == iMax)
+            return b.append(']').toString();
+        b.append(&quot;, &quot;);
+    }
+}
+</code></pre>
+<h2 id="arrayssort">Arrays.sort()</h2>
+<ol>
+<li>默认排序方式</li>
+</ol>
+<pre><code class="language-java">int arr[] = {1, 9, 8, 2, 3, 7, 6, 5, 4};
+Arrays.sort(arr);
+System.out.println(Arrays.toString(arr));
+</code></pre>
+<ol start="2">
+<li>自定义排序规则 (Comparable接口)</li>
+</ol>
+<pre><code class="language-java">public class Person implements Comparable{
+    private String name;
+    private int age;
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return &quot;Person{&quot; +
+                &quot;name='&quot; + name + '\'' +
+                &quot;, age=&quot; + age +
+                '}';
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Person person = (Person) o;
+        if (this.age &lt; person.age) {
+            return 1;
+        }
+        if (this.age &gt; person.age) {
+            return -1;
+        }
+        return 0;
+    }
+}
+Person p1 = new Person(&quot;Amy&quot;, 24);
+Person p2 = new Person(&quot;Tom&quot;, 22);
+Person p3 = new Person(&quot;Anna&quot;, 23);
+Person[] people = {p1, p2, p3};
+Arrays.sort(people);
+System.out.println(Arrays.toString(people));
+</code></pre>
+<h2 id="arraysfill">Arrays.fill()</h2>
+<p>左闭右开</p>
+<pre><code class="language-java">int arr[] = new int[] {1, 2, 3, 4, 5};
+Arrays.fill(arr, 2, 4, 6);
+System.out.println(Arrays.toString(arr));
+</code></pre>
+<hr>
+<h1 id="用数组存储表格数据">用数组存储表格数据</h1>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Age</th>
+<th>Gender</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1001</td>
+<td>Amy</td>
+<td>22</td>
+<td>F</td>
+</tr>
+<tr>
+<td>1002</td>
+<td>Tom</td>
+<td>23</td>
+<td>M</td>
+</tr>
+<tr>
+<td>1003</td>
+<td>John</td>
+<td>24</td>
+<td>M</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-java">Object[] p1 = {1001, &quot;Amy&quot;, 21, 'F'};
+Object[] p2 = {1002, &quot;Tom&quot;, 22, 'M'};
+Object[] p3 = {1003, &quot;John&quot;, 23, 'M'};
+Object[][] emps = new Object[3][];
+emps[0] = p1;
+emps[1] = p2;
+emps[2] = p3;
+for (Object[] person : emps) {
+    System.out.println(Arrays.toString(person));
+}
+</code></pre>
+<hr>
+<h1 id="冒泡排序优化">冒泡排序(优化)</h1>
+<ul>
+<li>若不用static关键字，则需要创建一个BubbleSort对象，再调用bubbleSort方法</li>
+<li>为什么外层是n-1次循环？因为一次循环排好一个数，n-1次循环排好n-1个数，最后一个数则自然排好。</li>
+<li>为什么内层是n-1-i次循环？n个数比较n-1次。</li>
+<li>当内部没有发生比较时，说明已经排序好了。</li>
+</ul>
+<pre><code class="language-java">public class BubbleSort {
+    public static void main(String[] args) {
+        int[] arr = {3, 1, 6, 2, 9, 0, 7, 4, 5, 8};
+        bubbleSort(arr);
+        System.out.println(Arrays.toString(arr));
+    }
+    public static void bubbleSort(int[] arr) {
+        int n = arr.length;
+        for (int i = 0; i &lt; n - 1; i++) {
+            boolean flag = true;
+            for (int j = 0; j &lt; n - i - 1; j++) {
+                if (arr[j] &gt; arr[j + 1]) {
+                    swap(arr, j, j + 1);
+                    flag = false;
+                }
+            }
+            if (flag) break;
+        }
+    }
+    public static void swap(int[] arr, int i, int j) {
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+}
+</code></pre>
+<h1 id="二分法">二分法</h1>
+<p><code>Arrays.binarySearch(arr, target)</code></p>
+<ul>
+<li>找到，返回正数，索引从零开始；</li>
+<li>没找到，返回负数，索引从负一开始。</li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E6%95%B0%E7%BB%84%E6%A6%82%E8%BF%B0">数组概述</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E6%95%B0%E7%BB%84%E5%92%8C%E5%88%9D%E5%A7%8B%E5%8C%96">创建数组和初始化</a></li>
+<li><a href="#%E6%95%B0%E7%BB%84%E9%81%8D%E5%8E%86%E5%92%8C%E5%A4%8D%E5%88%B6">数组遍历和复制</a></li>
+<li><a href="#javautilarrays%E7%B1%BB">Java.util.Arrays类</a>
+<ul>
+<li><a href="#arraystostring">Arrays.toString()</a></li>
+<li><a href="#arrayssort">Arrays.sort()</a></li>
+<li><a href="#arraysfill">Arrays.fill()</a></li>
+</ul>
+</li>
+<li><a href="#%E7%94%A8%E6%95%B0%E7%BB%84%E5%AD%98%E5%82%A8%E8%A1%A8%E6%A0%BC%E6%95%B0%E6%8D%AE">用数组存储表格数据</a></li>
+<li><a href="#%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F%E4%BC%98%E5%8C%96">冒泡排序(优化)</a></li>
+<li><a href="#%E4%BA%8C%E5%88%86%E6%B3%95">二分法</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://LittleFish0820.github.io/post/git_produce/">
+              <h3 class="post-title">
+                Git基础
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://LittleFish0820.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

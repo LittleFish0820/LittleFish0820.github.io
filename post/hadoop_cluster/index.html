@@ -1,0 +1,547 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hadoop集群搭建 | 小鱼儿</title>
+<link rel="shortcut icon" href="https://LittleFish0820.github.io/favicon.ico?v=1661738962773">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://LittleFish0820.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Hadoop集群搭建 | 小鱼儿 - Atom Feed" href="https://LittleFish0820.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="
+准备三台虚拟机
+
+安装一台CentOS 7虚拟机
+单台虚拟机环境配置
+
+
+免密登录
+安装JDK（102）
+安装Hadoop（102）
+编写集群分发脚本
+分发JDK，Hadoop及环境变量
+Hadoop配置文件
+
+core-site.xml..." />
+    <meta name="keywords" content="Hadoop,Linux,Shell" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://LittleFish0820.github.io">
+  <img class="avatar" src="https://LittleFish0820.github.io/images/avatar.png?v=1661738962773" alt="">
+  </a>
+  <h1 class="site-title">
+    小鱼儿
+  </h1>
+  <p class="site-description">
+    鱼戏莲叶间
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Hadoop集群搭建
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-08-24
+              </span>
+              <span>
+                10 min read
+              </span>
+              
+                <a href="https://LittleFish0820.github.io/tag/hadoop/" class="post-tag">
+                  # Hadoop
+                </a>
+              
+                <a href="https://LittleFish0820.github.io/tag/linux/" class="post-tag">
+                  # Linux
+                </a>
+              
+                <a href="https://LittleFish0820.github.io/tag/shell/" class="post-tag">
+                  # Shell
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p><ul class="markdownIt-TOC">
+<li><a href="#%E5%87%86%E5%A4%87%E4%B8%89%E5%8F%B0%E8%99%9A%E6%8B%9F%E6%9C%BA">准备三台虚拟机</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85%E4%B8%80%E5%8F%B0centos-7%E8%99%9A%E6%8B%9F%E6%9C%BA">安装一台CentOS 7虚拟机</a></li>
+<li><a href="#%E5%8D%95%E5%8F%B0%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE">单台虚拟机环境配置</a></li>
+</ul>
+</li>
+<li><a href="#%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95">免密登录</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85jdk102">安装JDK（102）</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85hadoop102">安装Hadoop（102）</a></li>
+<li><a href="#%E7%BC%96%E5%86%99%E9%9B%86%E7%BE%A4%E5%88%86%E5%8F%91%E8%84%9A%E6%9C%AC">编写集群分发脚本</a></li>
+<li><a href="#%E5%88%86%E5%8F%91jdkhadoop%E5%8F%8A%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F">分发JDK，Hadoop及环境变量</a></li>
+<li><a href="#hadoop%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">Hadoop配置文件</a>
+<ul>
+<li><a href="#core-sitexml">core-site.xml</a></li>
+<li><a href="#hdfs-sitexml">hdfs-site.xml</a></li>
+<li><a href="#yarn-sitexml">yarn-site.xml</a></li>
+<li><a href="#mapred-sitexml">mapred-site.xml</a></li>
+<li><a href="#%E5%88%86%E5%8F%91%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">分发配置文件</a></li>
+</ul>
+</li>
+<li><a href="#%E5%90%AF%E5%8A%A8%E9%9B%86%E7%BE%A4">启动集群</a>
+<ul>
+<li><a href="#%E9%85%8D%E7%BD%AEworkers">配置workers</a></li>
+<li><a href="#%E6%A0%BC%E5%BC%8F%E5%8C%96namenode%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%90%AF%E5%8A%A8">格式化NameNode(第一次启动)</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8%E5%8E%86%E5%8F%B2%E6%9C%8D%E5%8A%A1%E5%99%A8-102">启动历史服务器 (102)</a></li>
+<li><a href="#web%E7%AB%AF">Web端</a>
+<ul>
+<li><a href="#2nn-bug%E4%BF%AE%E6%94%B9">2nn bug修改</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</p>
+<p>Hadoop集群搭建详细过程，待完善</p>
+<!-- more -->
+<h1 id="准备三台虚拟机">准备三台虚拟机</h1>
+<h2 id="安装一台centos-7虚拟机">安装一台CentOS 7虚拟机</h2>
+<ol>
+<li>安装VMware，准备CentOS 7镜像文件</li>
+<li>新建虚拟机，内存8G，磁盘64G</li>
+<li>启动虚拟机，选择最小安装</li>
+<li>等待安装完成，重启虚拟机</li>
+</ol>
+<h2 id="单台虚拟机环境配置">单台虚拟机环境配置</h2>
+<p><strong>1. 安装net-tools，vim</strong></p>
+<pre><code class="language-shell">yum install -y epel-release
+yum install -y net-tools vim
+</code></pre>
+<p><strong>2. 关闭防火墙</strong></p>
+<pre><code class="language-shell">systemctl stop firewalld
+systemctl disable firewalld.service
+systemctl status firewalld
+</code></pre>
+<p><strong>3. 创建普通用户</strong></p>
+<pre><code class="language-shell">useradd fish
+passwd fish
+</code></pre>
+<p>添加权限</p>
+<pre><code class="language-SHELL">vim /etc/sudoers
+## Allow root to run any commands anywhere 
+root ALL=(ALL) ALL 
+fish ALL=(ALL) NOPASSWD:ALL    # 在root下面添加
+</code></pre>
+<p><strong>4. 创建项目文件夹，修改文件夹的所有者id</strong></p>
+<pre><code class="language-shell">chown lxx:lxx /opt/module /opt/software
+</code></pre>
+<p><strong>5. 卸载自带Java(最小安装略过这一步)</strong></p>
+<pre><code class="language-shell">rpm -qa | grep -i java | xargs -n1 sudo rpm -e --nodeps
+</code></pre>
+<p><strong>6. 修改虚拟机的静态IP</strong></p>
+<pre><code class="language-shell">vim /etc/sysconfig/network-scripts/ifcfg-ens33
+
+BOOTPROTO=static 
+IPADDR=192.168.1.101 
+GATEWAY=192.168.1.2 
+DNS1=192.168.1.2
+</code></pre>
+<p>Windows也要修改。</p>
+<p><strong>7. 修改主机名和配置主机名映射</strong></p>
+<pre><code class="language-shell">vim /etc/hosts
+192.168.1.100 hadoop100 
+192.168.1.101 hadoop101 
+192.168.1.102 hadoop102
+192.168.1.103 hadoop103 
+192.168.1.104 hadoop104
+
+vim /etc/hostname
+hadoop102
+</code></pre>
+<p>Windows的hosts也要修改</p>
+<pre><code class="language-bash">C:\Windows\System32\drivers\etc
+</code></pre>
+<p><strong>8. 虚拟机重启，克隆两台虚拟机</strong></p>
+<p>只需要修改主机名和静态IP地址，重启</p>
+<p><strong>9. 准备Xshell和Xftp</strong></p>
+<h1 id="免密登录">免密登录</h1>
+<pre><code class="language-shell">ssh-keygen -t rsa
+ssh-copy-id hadoop102
+ssh-copy-id hadoop103
+ssh-copy-id hadoop104
+</code></pre>
+<p>每台分发3次，三台共分发9次</p>
+<h1 id="安装jdk102">安装JDK（102）</h1>
+<p>解压后配置环境变量</p>
+<pre><code class="language-shell">vim /etc/profile.d/my_env.sh
+
+#JAVA_HOME 
+export JAVA_HOME=/opt/module/jdk1.8.0_212 
+export PATH=$PATH:$JAVA_HOME/bin
+
+source /etc/profile
+</code></pre>
+<p>测试JDK是否安装成功</p>
+<pre><code class="language-shell">java -version
+</code></pre>
+<h1 id="安装hadoop102">安装Hadoop（102）</h1>
+<p>解压后配置环境变量</p>
+<pre><code class="language-shell">vim /etc/profile.d/my_env.sh
+
+# HADOOP_HOME 
+export HADOOP_HOME=/opt/module/hadoop-3.1.3 
+export PATH=$PATH:$HADOOP_HOME/bin 
+export PATH=$PATH:$HADOOP_HOME/sbin
+
+source /etc/profile
+</code></pre>
+<p>测试是否安装成功</p>
+<pre><code class="language-shell">hadoop version
+</code></pre>
+<h1 id="编写集群分发脚本">编写集群分发脚本</h1>
+<p>请查看Shell标签下的hadoop脚本文章。</p>
+<h1 id="分发jdkhadoop及环境变量">分发JDK，Hadoop及环境变量</h1>
+<pre><code class="language-shell">xsync /opt/module/
+xsync /etc/profile.d/my_env.sh
+</code></pre>
+<h1 id="hadoop配置文件">Hadoop配置文件</h1>
+<h2 id="core-sitexml">core-site.xml</h2>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;configuration.xsl&quot;?&gt;
+&lt;configuration&gt;
+    &lt;!-- 指定 NameNode 的地址 --&gt;
+    &lt;property&gt;
+        &lt;name&gt;fs.defaultFS&lt;/name&gt;
+        &lt;value&gt;hdfs://hadoop102:8020&lt;/value&gt;     &lt;!-- 改！--&gt;
+    &lt;/property&gt;
+    &lt;!-- 指定 hadoop 数据的存储目录 --&gt;
+    &lt;property&gt;
+        &lt;name&gt;hadoop.tmp.dir&lt;/name&gt;
+        &lt;value&gt;/opt/module/hadoop-3.1.3/data&lt;/value&gt;
+    &lt;/property&gt;
+    
+    &lt;!-- 配置 HDFS 网页登录使用的静态用户为 atguigu --&gt;
+    &lt;property&gt;
+        &lt;name&gt;hadoop.http.staticuser.user&lt;/name&gt;
+        &lt;value&gt;fish&lt;/value&gt;					 					&lt;!-- 改！--&gt;
+    &lt;/property&gt;
+    
+    &lt;!-- 配置该atguigu(superUser)允许通过代理访问的主机节点 --&gt;
+    &lt;property&gt;
+        &lt;name&gt;hadoop.proxyuser.fish.hosts&lt;/name&gt;				&lt;!-- 改！--&gt;
+        &lt;value&gt;*&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;!-- 配置该atguigu(superUser)允许通过代理用户所属组 --&gt;
+    &lt;property&gt;
+        &lt;name&gt;hadoop.proxyuser.fish.groups&lt;/name&gt;            &lt;!-- 改！--&gt;
+        &lt;value&gt;*&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;!-- 配置该atguigu(superUser)允许通过代理的用户--&gt;
+    &lt;property&gt;
+        &lt;name&gt;hadoop.proxyuser.fish.users&lt;/name&gt;             &lt;!-- 改！--&gt;
+        &lt;value&gt;*&lt;/value&gt;
+	&lt;/property&gt;   
+    
+&lt;/configuration&gt;
+</code></pre>
+<h2 id="hdfs-sitexml">hdfs-site.xml</h2>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;configuration.xsl&quot;?&gt;
+&lt;configuration&gt;
+    &lt;!-- nn web 端访问地址--&gt;
+    &lt;property&gt;
+        &lt;name&gt;dfs.namenode.http-address&lt;/name&gt;
+        &lt;value&gt;hadoop102:9870&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;!-- 2nn web 端访问地址--&gt;
+    &lt;property&gt;
+        &lt;name&gt;dfs.namenode.secondary.http-address&lt;/name&gt;
+        &lt;value&gt;hadoop104:9868&lt;/value&gt;
+    &lt;/property&gt;
+    
+    &lt;!-- 测试环境指定HDFS副本的数量1 --&gt;
+    &lt;property&gt;
+        &lt;name&gt;dfs.replication&lt;/name&gt;
+        &lt;value&gt;3&lt;/value&gt;
+    &lt;/property&gt;
+    
+&lt;/configuration&gt;
+</code></pre>
+<h2 id="yarn-sitexml">yarn-site.xml</h2>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;configuration.xsl&quot;?&gt;
+
+&lt;configuration&gt;
+    &lt;!-- 指定 MR 走 shuffle --&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;
+        &lt;value&gt;mapreduce_shuffle&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;!-- 指定 ResourceManager 的地址--&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.resourcemanager.hostname&lt;/name&gt;
+        &lt;value&gt;hadoop103&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;!-- 环境变量的继承 --&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.nodemanager.env-whitelist&lt;/name&gt;
+     	&lt;value&gt;
+JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,HADOOP_CONF_DIR,CLASSPATH_PREPEND_DISTCACHE,HADOOP_YARN_HOME,HADOOP_MAPRED_HOME
+        &lt;/value&gt;
+    &lt;/property&gt;
+    
+    &lt;!--yarn单个容器允许分配的最大最小内存 --&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.scheduler.minimum-allocation-mb&lt;/name&gt;
+        &lt;value&gt;512&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.scheduler.maximum-allocation-mb&lt;/name&gt;
+        &lt;value&gt;4096&lt;/value&gt;
+    &lt;/property&gt;
+    
+    &lt;!-- yarn容器允许管理的物理内存大小 --&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.nodemanager.resource.memory-mb&lt;/name&gt;
+        &lt;value&gt;4096&lt;/value&gt;
+    &lt;/property&gt;
+    
+    &lt;!-- 关闭yarn对物理内存和虚拟内存的限制检查 --&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.nodemanager.pmem-check-enabled&lt;/name&gt;
+        &lt;value&gt;true&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.nodemanager.vmem-check-enabled&lt;/name&gt;
+        &lt;value&gt;false&lt;/value&gt;
+    &lt;/property&gt;
+    
+    &lt;!-- 开启日志聚集功能 --&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.log-aggregation-enable&lt;/name&gt;
+        &lt;value&gt;true&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;!-- 设置日志聚集服务器地址 --&gt;
+    &lt;property&gt; 
+        &lt;name&gt;yarn.log.server.url&lt;/name&gt; 
+        &lt;value&gt;http://hadoop102:19888/jobhistory/logs&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;!-- 设置日志保留时间为 7 天 --&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.log-aggregation.retain-seconds&lt;/name&gt;
+        &lt;value&gt;604800&lt;/value&gt;
+    &lt;/property&gt;
+    
+&lt;/configuration&gt;
+</code></pre>
+<h2 id="mapred-sitexml">mapred-site.xml</h2>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;configuration.xsl&quot;?&gt;
+&lt;configuration&gt;
+    &lt;!-- 指定 MapReduce 程序运行在 Yarn 上 --&gt;
+    &lt;property&gt;
+        &lt;name&gt;mapreduce.framework.name&lt;/name&gt;
+        &lt;value&gt;yarn&lt;/value&gt;
+    &lt;/property&gt;
+    
+    &lt;!-- 历史服务器端地址 --&gt;
+    &lt;property&gt;
+        &lt;name&gt;mapreduce.jobhistory.address&lt;/name&gt;
+        &lt;value&gt;hadoop102:10020&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;!-- 历史服务器 web 端地址 --&gt;
+    &lt;property&gt;
+        &lt;name&gt;mapreduce.jobhistory.webapp.address&lt;/name&gt;
+        &lt;value&gt;hadoop102:19888&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;
+</code></pre>
+<h2 id="分发配置文件">分发配置文件</h2>
+<pre><code class="language-shell">xsync /opt/module/hadoop-3.1.3/etc/hadoop/
+</code></pre>
+<h1 id="启动集群">启动集群</h1>
+<h2 id="配置workers">配置workers</h2>
+<pre><code class="language-shell">vim /opt/module/hadoop-3.1.3/etc/hadoop/workers
+hadoop102
+hadoop103
+hadoop104
+
+xsync /opt/module/hadoop-3.1.3/etc
+</code></pre>
+<h2 id="格式化namenode第一次启动">格式化NameNode(第一次启动)</h2>
+<pre><code class="language-shell">hdfs namenode -format  (102)
+sbin/start-dfs.sh      (102)
+sbin/start-yarn.sh     (103)
+</code></pre>
+<h2 id="启动历史服务器-102">启动历史服务器 (102)</h2>
+<pre><code class="language-shell">mapred --daemon start historyserver
+jps
+</code></pre>
+<h2 id="web端">Web端</h2>
+<p>NameNode  http://hadoop102:9870</p>
+<p>http://hadoop103:8088</p>
+<p>http://hadoop102:19888/jobhistory</p>
+<p>2nn http://hadoop104:9868</p>
+<h3 id="2nn-bug修改">2nn bug修改</h3>
+<p>查看浏览器控制台，追根溯源</p>
+<pre><code class="language-shell"># hadoop104
+$ cd /opt/module/hadoop-3.1.3/share/hadoop/hdfs/webapps/static
+$ vim dfs-dust.js
+# 改成 return Number(v).toLocaleString();
+</code></pre>
+<p>清除浏览器缓存，刷新即可。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E5%87%86%E5%A4%87%E4%B8%89%E5%8F%B0%E8%99%9A%E6%8B%9F%E6%9C%BA">准备三台虚拟机</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85%E4%B8%80%E5%8F%B0centos-7%E8%99%9A%E6%8B%9F%E6%9C%BA">安装一台CentOS 7虚拟机</a></li>
+<li><a href="#%E5%8D%95%E5%8F%B0%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE">单台虚拟机环境配置</a></li>
+</ul>
+</li>
+<li><a href="#%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95">免密登录</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85jdk102">安装JDK（102）</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85hadoop102">安装Hadoop（102）</a></li>
+<li><a href="#%E7%BC%96%E5%86%99%E9%9B%86%E7%BE%A4%E5%88%86%E5%8F%91%E8%84%9A%E6%9C%AC">编写集群分发脚本</a></li>
+<li><a href="#%E5%88%86%E5%8F%91jdkhadoop%E5%8F%8A%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F">分发JDK，Hadoop及环境变量</a></li>
+<li><a href="#hadoop%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">Hadoop配置文件</a>
+<ul>
+<li><a href="#core-sitexml">core-site.xml</a></li>
+<li><a href="#hdfs-sitexml">hdfs-site.xml</a></li>
+<li><a href="#yarn-sitexml">yarn-site.xml</a></li>
+<li><a href="#mapred-sitexml">mapred-site.xml</a></li>
+<li><a href="#%E5%88%86%E5%8F%91%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">分发配置文件</a></li>
+</ul>
+</li>
+<li><a href="#%E5%90%AF%E5%8A%A8%E9%9B%86%E7%BE%A4">启动集群</a>
+<ul>
+<li><a href="#%E9%85%8D%E7%BD%AEworkers">配置workers</a></li>
+<li><a href="#%E6%A0%BC%E5%BC%8F%E5%8C%96namenode%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%90%AF%E5%8A%A8">格式化NameNode(第一次启动)</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8%E5%8E%86%E5%8F%B2%E6%9C%8D%E5%8A%A1%E5%99%A8-102">启动历史服务器 (102)</a></li>
+<li><a href="#web%E7%AB%AF">Web端</a>
+<ul>
+<li><a href="#2nn-bug%E4%BF%AE%E6%94%B9">2nn bug修改</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://LittleFish0820.github.io/post/git4github/">
+              <h3 class="post-title">
+                Git与代码托管中心
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://LittleFish0820.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

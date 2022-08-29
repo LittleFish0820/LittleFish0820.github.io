@@ -1,0 +1,343 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HBase安装 | 小鱼儿</title>
+<link rel="shortcut icon" href="https://LittleFish0820.github.io/favicon.ico?v=1661738962773">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://LittleFish0820.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="HBase安装 | 小鱼儿 - Atom Feed" href="https://LittleFish0820.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="
+Zookeeper和Hadoop正常部署
+HBase解压与配置环境变量
+HBase配置文件
+
+修改hbase-env.sh
+修改hbase-site.xml
+修改regionservers
+解决 HBase 和 Hadoop 的 log4..." />
+    <meta name="keywords" content="HBase" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://LittleFish0820.github.io">
+  <img class="avatar" src="https://LittleFish0820.github.io/images/avatar.png?v=1661738962773" alt="">
+  </a>
+  <h1 class="site-title">
+    小鱼儿
+  </h1>
+  <p class="site-description">
+    鱼戏莲叶间
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              HBase安装
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-08-28
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://LittleFish0820.github.io/tag/hbase/" class="post-tag">
+                  # HBase
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <p><ul class="markdownIt-TOC">
+<li><a href="#zookeeper%E5%92%8Chadoop%E6%AD%A3%E5%B8%B8%E9%83%A8%E7%BD%B2">Zookeeper和Hadoop正常部署</a></li>
+<li><a href="#hbase%E8%A7%A3%E5%8E%8B%E4%B8%8E%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F">HBase解压与配置环境变量</a></li>
+<li><a href="#hbase%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">HBase配置文件</a>
+<ul>
+<li><a href="#%E4%BF%AE%E6%94%B9hbase-envsh">修改hbase-env.sh</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9hbase-sitexml">修改hbase-site.xml</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9regionservers">修改regionservers</a></li>
+<li><a href="#%E8%A7%A3%E5%86%B3-hbase-%E5%92%8C-hadoop-%E7%9A%84-log4j-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98">解决 HBase 和 Hadoop 的 log4j 兼容性问题</a></li>
+</ul>
+</li>
+<li><a href="#%E5%88%86%E5%8F%91hbase">分发HBase</a></li>
+<li><a href="#hbase%E6%9C%8D%E5%8A%A1%E5%90%AF%E5%8A%A8">HBase服务启动</a>
+<ul>
+<li><a href="#%E5%8D%95%E7%82%B9%E5%90%AF%E5%8A%A8">单点启动</a></li>
+<li><a href="#%E7%BE%A4%E5%90%AF">群启</a></li>
+<li><a href="#%E7%BE%A4%E5%81%9C">群停</a></li>
+</ul>
+</li>
+<li><a href="#%E6%9F%A5%E7%9C%8Bhbase%E9%A1%B5%E9%9D%A2">查看HBase页面</a></li>
+<li><a href="#%E9%AB%98%E5%8F%AF%E7%94%A8">高可用</a></li>
+</ul>
+</p>
+<p>HBase 是以 hdfs 为数据存储的，一种分布式、可扩展的 NoSQL 数据库。</p>
+<!-- more -->
+<h1 id="zookeeper和hadoop正常部署">Zookeeper和Hadoop正常部署</h1>
+<pre><code class="language-shell">zk.sh start
+</code></pre>
+<pre><code class="language-shell">myhadoop.sh start
+</code></pre>
+<hr>
+<h1 id="hbase解压与配置环境变量">HBase解压与配置环境变量</h1>
+<pre><code class="language-bash">cd /opt/software
+tar -zxvf hbase-2.4.11-bin.tar.gz -C 
+/opt/module/
+</code></pre>
+<pre><code>sudo vim /etc/profile.d/my_env.sh
+</code></pre>
+<pre><code class="language-bash">#HBASE_HOME
+export HBASE_HOME=/opt/module/hbase-2.4.11
+export PATH=$PATH:$HBASE_HOME/bin
+</code></pre>
+<pre><code class="language-bash">source /etc/profile.d/my_env.sh
+</code></pre>
+<pre><code class="language-bash">sudo ~/bin/xsync /etc/profile.d/my_env.sh
+</code></pre>
+<hr>
+<h1 id="hbase配置文件">HBase配置文件</h1>
+<h2 id="修改hbase-envsh">修改hbase-env.sh</h2>
+<pre><code class="language-shell">export HBASE_MANAGES_ZK=false
+# 不用它的zk, 用自定义的zk
+</code></pre>
+<h2 id="修改hbase-sitexml">修改hbase-site.xml</h2>
+<p>选择部署为集群模式</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;configuration.xsl&quot;?&gt;
+&lt;configuration&gt;
+    &lt;property&gt;
+        &lt;name&gt;hbase.zookeeper.quorum&lt;/name&gt;
+        &lt;value&gt;hadoop102,hadoop103,hadoop104&lt;/value&gt;
+        &lt;description&gt;The directory shared by RegionServers.&lt;/description&gt;
+    &lt;/property&gt;
+
+&lt;!-- &lt;property&gt;--&gt;
+&lt;!-- &lt;name&gt;hbase.zookeeper.property.dataDir&lt;/name&gt;--&gt;
+&lt;!-- &lt;value&gt;/export/zookeeper&lt;/value&gt;--&gt;
+&lt;!-- &lt;description&gt; 记得修改 ZK 的配置文件 --&gt;
+&lt;!-- ZK 的信息不能保存到临时文件夹--&gt;
+&lt;!-- &lt;/description&gt;--&gt;
+&lt;!-- &lt;/property&gt;--&gt;
+
+    &lt;property&gt;
+        &lt;name&gt;hbase.rootdir&lt;/name&gt;
+        &lt;value&gt;hdfs://hadoop102:8020/hbase&lt;/value&gt;
+        &lt;description&gt;The directory shared by RegionServers.&lt;/description&gt;
+    &lt;/property&gt;
+    
+    &lt;property&gt;
+        &lt;name&gt;hbase.cluster.distributed&lt;/name&gt;
+        &lt;value&gt;true&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;
+</code></pre>
+<h2 id="修改regionservers">修改regionservers</h2>
+<pre><code class="language-bash">hadoop102
+hadoop103
+hadoop104
+</code></pre>
+<h2 id="解决-hbase-和-hadoop-的-log4j-兼容性问题">解决 HBase 和 Hadoop 的 log4j 兼容性问题</h2>
+<p>修改 HBase 的 jar 包，使用 Hadoop 的 jar 包</p>
+<pre><code class="language-bash">mv /opt/module/hbase/lib/client-facing-thirdparty/slf4j-reload4j-1.7.33.jar /opt/module/hbase/lib/client-facing-thirdparty/slf4j-reload4j-1.7.33.jar.bak
+</code></pre>
+<hr>
+<h1 id="分发hbase">分发HBase</h1>
+<pre><code class="language-bash">xsync /opt/module/hbase-2.4.11/
+</code></pre>
+<hr>
+<h1 id="hbase服务启动">HBase服务启动</h1>
+<h2 id="单点启动">单点启动</h2>
+<pre><code class="language-shell">bin/hbase-daemon.sh start master
+bin/hbase-daemon.sh start regionserver
+</code></pre>
+<h2 id="群启">群启</h2>
+<pre><code class="language-shell">bin/start-hbase.sh
+</code></pre>
+<ul>
+<li>102 HMaster HRegionServer</li>
+<li>103 HRegionServer</li>
+<li>104 HRegionServer</li>
+</ul>
+<h2 id="群停">群停</h2>
+<pre><code class="language-shell">bin/stop-hbase.sh
+</code></pre>
+<hr>
+<h1 id="查看hbase页面">查看HBase页面</h1>
+<p>http://hadoop102:16010</p>
+<hr>
+<h1 id="高可用">高可用</h1>
+<ol>
+<li>配置前需要关闭HBase集群</li>
+</ol>
+<pre><code class="language-bash">touch conf/backup-masters
+echo hadoop103 &gt; conf/backup-masters
+xsync conf
+</code></pre>
+<ol start="2">
+<li>
+<p>重启HBase集群，<code>jpsall</code>查看进程，并打开Web端查看。</p>
+</li>
+<li>
+<p>当102的HMaster故障，刷新103Web端，103的Backup HMaster取而代之。</p>
+</li>
+</ol>
+<pre><code class="language-shell">kill -9 102HMaster的端口号
+</code></pre>
+<ol start="4">
+<li>当重启102的HMaster，103并不会退位，102成为新的Backup HMaster。</li>
+</ol>
+<pre><code class="language-shell">bin/hbase-daemon.sh start master
+</code></pre>
+<ol start="5">
+<li>此时关闭集群需要在103关闭</li>
+</ol>
+<pre><code class="language-shell">(103) stop-hbase.sh
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#zookeeper%E5%92%8Chadoop%E6%AD%A3%E5%B8%B8%E9%83%A8%E7%BD%B2">Zookeeper和Hadoop正常部署</a></li>
+<li><a href="#hbase%E8%A7%A3%E5%8E%8B%E4%B8%8E%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F">HBase解压与配置环境变量</a></li>
+<li><a href="#hbase%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">HBase配置文件</a>
+<ul>
+<li><a href="#%E4%BF%AE%E6%94%B9hbase-envsh">修改hbase-env.sh</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9hbase-sitexml">修改hbase-site.xml</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9regionservers">修改regionservers</a></li>
+<li><a href="#%E8%A7%A3%E5%86%B3-hbase-%E5%92%8C-hadoop-%E7%9A%84-log4j-%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98">解决 HBase 和 Hadoop 的 log4j 兼容性问题</a></li>
+</ul>
+</li>
+<li><a href="#%E5%88%86%E5%8F%91hbase">分发HBase</a></li>
+<li><a href="#hbase%E6%9C%8D%E5%8A%A1%E5%90%AF%E5%8A%A8">HBase服务启动</a>
+<ul>
+<li><a href="#%E5%8D%95%E7%82%B9%E5%90%AF%E5%8A%A8">单点启动</a></li>
+<li><a href="#%E7%BE%A4%E5%90%AF">群启</a></li>
+<li><a href="#%E7%BE%A4%E5%81%9C">群停</a></li>
+</ul>
+</li>
+<li><a href="#%E6%9F%A5%E7%9C%8Bhbase%E9%A1%B5%E9%9D%A2">查看HBase页面</a></li>
+<li><a href="#%E9%AB%98%E5%8F%AF%E7%94%A8">高可用</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://LittleFish0820.github.io/post/maxwell_install_test/">
+              <h3 class="post-title">
+                Maxwell安装、配置与测试
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://LittleFish0820.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
